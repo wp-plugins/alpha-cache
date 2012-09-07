@@ -20,13 +20,16 @@ table instead of processing the comparatively heavier and more expensive WordPre
 PHP scripts.
 
 It has many options to drive caching process.
-You can:
-1. ... define filter by regular expressions pattern to exclude 
+
+**You can:**
+
+* ... define filter by regular expressions pattern to exclude 
 necessary urls from cache.
-2. ... fill user's list to define who will not cached.
-3. ... set flag to process POST request without caching.
-4. ... enable cache only for anonymous users
-5. ... set force cleaning necessary cached pages on page/comment updating.
+* ... fill user's list to define who will not cached.
+* ... set flag to process POST request without caching.
+* ... enable cache only for anonymous users
+* ... set force cleaning necessary cached pages on page/comment updating.
+
 and etc.
 
 == Installation ==
