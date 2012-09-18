@@ -4,7 +4,7 @@ Donate link: http://shra.ru/2012/09/alpha-cache-modul-keshirovaniya-dlya-wordpre
 Tags: cache, advanced cache, benchmark, benchmarking, cache, cacheing, caching, cash, execution, highly extensible, includes extensive documentation, loading, options panel included, performance, quick cache, quickcache, speed, super cache, wp-cache
 Requires at least: 3.0
 Tested up to: 3.4
-Stable tag: 1.0
+Stable tag: 1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -45,6 +45,13 @@ configuration is situatable for most cases.
 1. Alpha Cache option's page
 
 == Changelog ==
+
+= 1.1 =
+* Add compatibility for some WP configurations.
+* Fix some bugs
+* Add default rule for wp-login.php to avoid cache this script. You can add this rule manually or use "Load defaults".
+* Expand statistics. Now you can see table with actual number of cached pages by each user.
+* Remove some debug code
 
 = 1.0 =
 First version, here is everything we have.

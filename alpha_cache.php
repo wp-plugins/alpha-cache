@@ -5,7 +5,7 @@ Plugin URI: http://wordpress.org/extend/plugins/alpha-cache/
 Description: Cache wordpress plug-in. Its makes your WP fast and your blog life easy.
 Author: shra <to@shra.ru>
 Author URI: http://shra.ru
-Version: 1.0
+Version: 1.1
 */ 
  
 class AlphaCacheClass 
@@ -45,7 +45,7 @@ class AlphaCacheClass
 		$comment_id += 0;
 		$post_id = $wpdb->get_var("SELECT comment_post_ID FROM {$table_prefix}comments WHERE comment_ID = {$comment_id}");
 		$uri = $this->posturi($post_id);
-		$this->set_cache($uri . '_', '111');
+//		$this->set_cache($uri . '_', '111');
 		$this->delete_cache($uri);
 	}
 
@@ -54,6 +54,7 @@ class AlphaCacheClass
 		$uri = get_permalink($post_id);
 		$a = parse_url($uri);
 		unset($a['scheme'], $a['host'], $a['fragment']);
+		$a['query'] = '?' . $a['query'];
 		return implode('', $a);
 	}
 	
@@ -83,6 +84,7 @@ class AlphaCacheClass
 		//check URL list
 		$u = explode("\n", $this->ac_set['avoid_urls']);
 		foreach($u as $v) {
+			$v = trim($v);
 			if ($v && preg_match("#{$v}#is", $uri, $m)) {
 				$this->active = false;
 				break;
@@ -148,7 +150,7 @@ class AlphaCacheClass
 
 	private function delete_cache($uri) {
 		global $wpdb;
-		$wpdb->query("DELETE FROM cache_alpha WHERE debug LIKE '%s%%'", $uri);
+		$wpdb->query("DELETE FROM cache_alpha WHERE debug LIKE '" . mysql_escape_string($uri).  "%%'");
 	}
 	
 	private function get_cache($uri) {
@@ -169,7 +171,6 @@ class AlphaCacheClass
 		if (empty($data)) return false;
 		global $wpdb, $user_ID;
 		$key = $this->getkey($uri);
-		
 		$wpdb->replace('cache_alpha', array('pagekey' => $key, 'pagedata' => $data, 'uid' => $user_ID + 0, 'debug' => $uri,
 				'expiretime' => time() + $this->ac_set['cache_lifetime']));
 		return true;
@@ -310,7 +311,26 @@ class AlphaCacheClass
 	} else {
 		echo __("We have no statistics yet.");
 	}
-?></i>
+	
+	echo "</i><br />";
+	
+	$rows = $wpdb->get_results("
+		SELECT cache_alpha.uid, COUNT(*) as NN, US.user_login, US.user_email
+		FROM cache_alpha
+		LEFT JOIN {$table_prefix}users US ON US.ID = cache_alpha.uid
+		WHERE expiretime > " . time() . "
+		GROUP BY cache_alpha.uid, US.user_login, US.user_email
+		ORDER BY user_login	");
+
+	echo "<table border=1 cellpadding=5 cellspacing=0 style='border-collapse: collapse'><tr><th>" . __('User name') . "</th><th>" . __('Cached pages') . "</th></tr>";
+	$total = 0;
+	foreach($rows as $v) {
+		echo "<tr><td>" . ($v->uid ? htmlspecialchars($v->user_login) : __('Anonymous')) . "</td><td align=right>" . $v->NN .  "</td></tr>";
+		$total += $v->NN;
+	}
+	
+	echo "<tr><th>" . __('Total') . ":</th><td align=right>$total</td></tr></table>";
+?>
 			</td>
 		</tr>
 
@@ -384,15 +404,16 @@ class AlphaCacheClass
 		
 		//create cache table
 		$wpdb->query("
-			CREATE TABLE IF NOT EXISTS `cache_alpha` (
-			  `pagekey` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-			  `uid` int(11) NOT NULL,
-			  `pagedata` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-			  `expiretime` int(11) NOT NULL,
-			  `debug` varchar(250) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-			  PRIMARY KEY (`pagekey`),
-			  KEY `uid` (`uid`)
-			) ENGINE=MyISAM DEFAULT CHARSET=utf8; ");
+DROP TABLE IF EXISTS `cache_alpha`;
+CREATE TABLE IF NOT EXISTS `cache_alpha` (
+  `pagekey` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `uid` int(11) NOT NULL,
+  `pagedata` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `expiretime` int(11) NOT NULL,
+  `debug` varchar(250) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`pagekey`,`uid`),
+  KEY `uid` (`uid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 		//set defaults
 		add_option('alpha_cache_settings', AlphaCacheClass::default_settings() );
@@ -403,7 +424,8 @@ class AlphaCacheClass
 			'cache_lifetime' => 3600, 
 			'dbmaintain_period' => 43200,
 			//no cache on admin's pages
-			'avoid_urls' => '^/wp-admin/', 
+			'avoid_urls' => '^/wp-admin/
+^/wp-login.php', 
 			'users_nocache' => '',
 			'chPOST' => 1,
 			'doStat' => '',
