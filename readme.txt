@@ -55,3 +55,8 @@ configuration is situatable for most cases.
 
 = 1.0 =
 First version, here is everything we have.
+
+== Upgrade Notice ==
+
+= 1.1 =
+Delete old version before install this new.
