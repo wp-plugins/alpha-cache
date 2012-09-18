@@ -404,7 +404,8 @@ class AlphaCacheClass
 		
 		//create cache table
 		$wpdb->query("
-DROP TABLE IF EXISTS `cache_alpha`;
+			DROP TABLE IF EXISTS `cache_alpha`");
+		$wpdb->query("
 CREATE TABLE IF NOT EXISTS `cache_alpha` (
   `pagekey` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `uid` int(11) NOT NULL,
