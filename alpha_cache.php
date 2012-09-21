@@ -5,7 +5,7 @@ Plugin URI: http://wordpress.org/extend/plugins/alpha-cache/
 Description: Cache wordpress plug-in. Its makes your WP fast and your blog life easy.
 Author: shra <to@shra.ru>
 Author URI: http://shra.ru
-Version: 1.1
+Version: 1.1.0001
 */ 
  
 class AlphaCacheClass 
@@ -54,7 +54,7 @@ class AlphaCacheClass
 		$uri = get_permalink($post_id);
 		$a = parse_url($uri);
 		unset($a['scheme'], $a['host'], $a['fragment']);
-		$a['query'] = '?' . $a['query'];
+		if (!empty($a['query'])) $a['query'] = '?' . $a['query'];
 		return implode('', $a);
 	}
 	
