@@ -63,3 +63,6 @@ First version, here is everything we have.
 
 = 1.1 =
 Delete old version before install this new.
+
+= 1.1.0001 =
+Delete old version before install this new. Table alpha_cache will be deleted and then will re-created with correct table_prefix.
