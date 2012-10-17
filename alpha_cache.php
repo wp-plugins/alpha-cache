@@ -40,12 +40,11 @@ class AlphaCacheClass
 
 	/* comment status hook */
 	public function comment_status_hook($comment_id) {
-		global $wpdb, $table_prefix;
+		global $wpdb;
 		
 		$comment_id += 0;
-		$post_id = $wpdb->get_var("SELECT comment_post_ID FROM {$table_prefix}comments WHERE comment_ID = {$comment_id}");
+		$post_id = $wpdb->get_var("SELECT comment_post_ID FROM {$wpdb->prefix}comments WHERE comment_ID = {$comment_id}");
 		$uri = $this->posturi($post_id);
-//		$this->set_cache($uri . '_', '111');
 		$this->delete_cache($uri);
 	}
 
@@ -150,7 +149,7 @@ class AlphaCacheClass
 
 	private function delete_cache($uri) {
 		global $wpdb;
-		$wpdb->query("DELETE FROM cache_alpha WHERE debug LIKE '" . mysql_escape_string($uri).  "%%'");
+		$wpdb->query("DELETE FROM {$wpdb->prefix}cache_alpha WHERE debug LIKE '" . mysql_escape_string($uri).  "%%'");
 	}
 	
 	private function get_cache($uri) {
@@ -158,7 +157,7 @@ class AlphaCacheClass
 		$key = $this->getkey($uri);
 		
 		$user_ID += 0;
-		$r = $wpdb->get_row("SELECT pagedata FROM cache_alpha 
+		$r = $wpdb->get_row("SELECT pagedata FROM {$wpdb->prefix}cache_alpha 
 			WHERE pagekey = '{$key}' AND uid = {$user_ID} AND expiretime > " . time());
 		if ($r === null) {
 			return false;
@@ -171,7 +170,7 @@ class AlphaCacheClass
 		if (empty($data)) return false;
 		global $wpdb, $user_ID;
 		$key = $this->getkey($uri);
-		$wpdb->replace('cache_alpha', array('pagekey' => $key, 'pagedata' => $data, 'uid' => $user_ID + 0, 'debug' => $uri,
+		$wpdb->replace($wpdb->prefix . 'cache_alpha', array('pagekey' => $key, 'pagedata' => $data, 'uid' => $user_ID + 0, 'debug' => $uri,
 				'expiretime' => time() + $this->ac_set['cache_lifetime']));
 		return true;
 	}
@@ -181,8 +180,8 @@ class AlphaCacheClass
 		global $wpdb;
 		$t = time();
 		if ($this->ac_set['last-maintain'] + $this->ac_set['dbmaintain_period'] < $t) {
-			$wpdb->query("DELETE FROM `cache_alpha` WHERE expiretime < $t");
-			$wpdb->query("OPTIMIZE TABLE `cache_alpha`");
+			$wpdb->query("DELETE FROM `{$wpdb->prefix}cache_alpha` WHERE expiretime < $t");
+			$wpdb->query("OPTIMIZE TABLE `{$wpdb->prefix}cache_alpha`");
 			$this->ac_set['last-maintain'] = $t;
 			update_option('alpha_cache_settings', $this->ac_set);
 		}
@@ -190,7 +189,7 @@ class AlphaCacheClass
 	
     /* Options admin page */
     public function _options_page() {
-		global $wpdb, $table_prefix;
+		global $wpdb;
 	
 		switch ($_POST['action']) {
 		case 'save_cache_settings':
@@ -218,7 +217,7 @@ class AlphaCacheClass
 				$this->ac_set['miss'] = 0;
 				break;
 			case 'clear cache data':
-				$wpdb->query("TRUNCATE TABLE `cache_alpha`");
+				$wpdb->query("TRUNCATE TABLE `{$wpdb->prefix}cache_alpha`");
 				break;
 			case 'load defaults':
 				$new_set = $this->default_settings();
@@ -261,7 +260,7 @@ class AlphaCacheClass
 			<small><?=__('You can use multi-select.')?></small><br />
 			<select id="user_selector" name="users" multiple size="5" style="width: 350px;">
 <?
-	$rows = $wpdb->get_results("SELECT ID, user_login, user_email FROM {$table_prefix}users ORDER BY user_login");
+	$rows = $wpdb->get_results("SELECT ID, user_login, user_email FROM {$wpdb->prefix}users ORDER BY user_login");
 	foreach($rows as $v) {
 		echo "<option value=\"{$v->user_login}\">{$v->user_login} ({$v->user_email})</option>";
 	}
@@ -315,11 +314,11 @@ class AlphaCacheClass
 	echo "</i><br />";
 	
 	$rows = $wpdb->get_results("
-		SELECT cache_alpha.uid, COUNT(*) as NN, US.user_login, US.user_email
-		FROM cache_alpha
-		LEFT JOIN {$table_prefix}users US ON US.ID = cache_alpha.uid
+		SELECT ALPHA.uid, COUNT(*) as NN, US.user_login, US.user_email
+		FROM {$wpdb->prefix}cache_alpha AS ALPHA
+		LEFT JOIN {$wpdb->prefix}users US ON US.ID = ALPHA.uid
 		WHERE expiretime > " . time() . "
-		GROUP BY cache_alpha.uid, US.user_login, US.user_email
+		GROUP BY ALPHA.uid, US.user_login, US.user_email
 		ORDER BY user_login	");
 
 	echo "<table border=1 cellpadding=5 cellspacing=0 style='border-collapse: collapse'><tr><th>" . __('User name') . "</th><th>" . __('Cached pages') . "</th></tr>";
@@ -406,7 +405,9 @@ class AlphaCacheClass
 		$wpdb->query("
 			DROP TABLE IF EXISTS `cache_alpha`");
 		$wpdb->query("
-CREATE TABLE IF NOT EXISTS `cache_alpha` (
+			DROP TABLE IF EXISTS `{$wpdb->prefix}cache_alpha`");
+		$wpdb->query("
+CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}cache_alpha` (
   `pagekey` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `uid` int(11) NOT NULL,
   `pagedata` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
@@ -439,7 +440,7 @@ CREATE TABLE IF NOT EXISTS `cache_alpha` (
     static function uninstall() {
 		global $wpdb;
 
-		$wpdb->query("DROP TABLE IF EXISTS `cache_alpha`");
+		$wpdb->query("DROP TABLE IF EXISTS `{$wpdb->prefix}cache_alpha`");
 		delete_option('alpha_cache_settings');
 	}
 
@@ -457,4 +458,3 @@ if (isset($alpha_cache_obj)) {
 	;
 
 } // if (isset($alpha_cache_obj))
-

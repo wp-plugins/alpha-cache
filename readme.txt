@@ -46,6 +46,9 @@ configuration is situatable for most cases.
 
 == Changelog ==
 
+= 1.1.001 =
+* Add usage table_prefix
+
 = 1.1 =
 * Add compatibility for some WP configurations.
 * Fix some bugs
