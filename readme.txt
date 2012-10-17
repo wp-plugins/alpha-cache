@@ -47,7 +47,7 @@ configuration is situatable for most cases.
 == Changelog ==
 
 = 1.1.001 =
-* Add usage table_prefix
+* Add usage table_prefix. Don't upgrade. Use uninstall plugin then install this version.
 
 = 1.1 =
 * Add compatibility for some WP configurations.
