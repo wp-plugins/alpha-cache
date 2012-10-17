@@ -4,7 +4,7 @@ Donate link: http://shra.ru/2012/09/alpha-cache-modul-keshirovaniya-dlya-wordpre
 Tags: cache, advanced cache, benchmark, benchmarking, cache, cacheing, caching, cash, execution, highly extensible, includes extensive documentation, loading, options panel included, performance, quick cache, quickcache, speed, super cache, wp-cache
 Requires at least: 3.0
 Tested up to: 3.4
-Stable tag: 1.1
+Stable tag: 1.1.001
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
