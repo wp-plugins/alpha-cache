@@ -4,7 +4,7 @@ Donate link: http://shra.ru/2012/09/alpha-cache-modul-keshirovaniya-dlya-wordpre
 Tags: cache, advanced cache, benchmark, benchmarking, cache, cacheing, caching, cash, execution, highly extensible, includes extensive documentation, loading, options panel included, performance, quick cache, quickcache, speed, super cache, wp-cache
 Requires at least: 3.0
 Tested up to: 3.4
-Stable tag: 1.1.001
+Stable tag: 1.1.002
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -45,6 +45,9 @@ configuration is situatable for most cases.
 1. Alpha Cache option's page
 
 == Changelog ==
+
+= 1.1.002 =
+* Short cache size datatype was changed from "text" to "mediumtext"
 
 = 1.1.001 =
 * Add usage table_prefix. Don't upgrade. Use uninstall plugin then install this version.

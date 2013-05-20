@@ -5,7 +5,7 @@ Plugin URI: http://wordpress.org/extend/plugins/alpha-cache/
 Description: Cache wordpress plug-in. Its makes your WP fast and your blog life easy.
 Author: shra <to@shra.ru>
 Author URI: http://shra.ru
-Version: 1.1.001
+Version: 1.1.002
 */ 
  
 class AlphaCacheClass 
@@ -410,7 +410,7 @@ class AlphaCacheClass
 CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}cache_alpha` (
   `pagekey` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `uid` int(11) NOT NULL,
-  `pagedata` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `pagedata` mediumtext CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `expiretime` int(11) NOT NULL,
   `debug` varchar(250) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`pagekey`,`uid`),
