@@ -47,7 +47,7 @@ configuration is situatable for most cases.
 == Changelog ==
 
 = 1.1.002 =
-* Short cache size datatype was changed from "text" to "mediumtext"
+* Short cache size datatype was changed from "text" to "mediumtext". Deactivate and then activate the plugin after if you updated old versions.
 
 = 1.1.001 =
 * Add usage table_prefix. Don't upgrade. Use uninstall plugin then install this version.
